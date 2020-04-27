@@ -9,12 +9,11 @@ const app = new Vue({
 	...App
 })
 app.$mount()
-
 //全局事件
 Vue.prototype.$bgmPlay = (id) => {
-	console.log("main全局")
 	let app = getApp().globalData
 	if (id != app.id) {
+		console.log(id)
 		app.id = id;
 		app.status = false
 		if(app.bgm){app.bgm.destroy();}
@@ -23,6 +22,7 @@ Vue.prototype.$bgmPlay = (id) => {
 			url: `${app.apiUrl}/song/url?id=${id}`,
 			success: res => {
 				app.bgm.src = res.data.data[0].url
+				console.log(res)
 			}
 		})
 	}

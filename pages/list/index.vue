@@ -11,10 +11,10 @@
 </template>
 
 <script>
+	const app = getApp().globalData;
 	export default {
 		data() {
 			return {
-				api: getApp().globalData.apiUrl,
 				list: [],
 				top: [{
 					id: 27,
@@ -30,11 +30,13 @@
 		},
 		onLoad: function(option) {
 			uni.request({
-				url: `${this.api}/top/list?idx=${option.id}`,
+				url: `${app.apiUrl}/top/list?idx=${option.id}`,
 				success: res => {
-					console.log(res.data)
 					let data = res.data.playlist
 					this.list = data
+					console.log(data)
+					app.list = data.tracks.map(item => item.id)
+					console.log(app.list)
 				}
 			})
 			this.top.forEach(item => {
@@ -48,10 +50,12 @@
 		methods: {
 			playBtn: function(id) {
 				console.log(`播放${id}`)
-				this.$emit('share', {
-					msg: "123"
-				})
 				this.$bgmPlay(id);
+				app.bgm.onEnded(() => {
+					console.log("自动停止播放")
+					let index = app.list.findIndex(item => item == app.id)
+					this.$bgmPlay(app.list[index + 1])
+				})
 			},
 			detailed: function(id) {
 				uni.navigateTo({

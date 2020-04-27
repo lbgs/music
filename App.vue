@@ -20,8 +20,8 @@
 			id: 0,
 			pauseTime: 0,
 			status: false,
-			bgm: uni.createInnerAudioContext()
-
+			bgm: uni.createInnerAudioContext(),
+			list: []
 		}
 	}
 </script>

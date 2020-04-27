@@ -9,9 +9,10 @@
 				</view>
 			</view>
 			<view class="hot-gtid">
-				<uni-grid :column="3" :showBorder="false" @change="getDtail">
-					<uni-grid-item v-for="items in item.list" :key="items.id" style="height: auto;" :index="items.id">
-						<view class="flex-item">
+				<uni-grid :column="3" :showBorder="false">
+					<uni-grid-item v-for="items in item.list.filter((t, i) =>{if(i<6){return t}})" :key="items.id" style="height: auto;"
+					 :index="items.id">
+						<view class="flex-item" :data-bid="item.id" :data-id="items.id" @click="getDtail">
 							<image :src="items.al.picUrl" mode="aspectFit"></image>
 							<view class="text">{{items.name + "-" + items.ar[0].name}}</view>
 						</view>
@@ -25,6 +26,7 @@
 <script>
 	import uniGrid from "@/components/uni-grid/uni-grid.vue"
 	import uniGridItem from "@/components/uni-grid-item/uni-grid-item.vue"
+	const app = getApp().globalData
 	export default {
 		data: function() {
 			return {
@@ -37,10 +39,7 @@
 			uniGrid,
 			uniGridItem
 		},
-		onLoad: function(){
-
-		},
-		mounted: function() {
+		onLoad: function() {
 			this.getHot()
 		},
 		methods: {
@@ -52,16 +51,24 @@
 					this.getData(3, "飙升榜", apiUrl + "/top/list?idx=3"),
 
 				]).then(res => {
-					res.forEach(res => this.listAll.push(res))
-					console.log(this.listAll)
+					res.forEach(item => this.listAll.push(item))
 				})
 			},
 			getDtail: function(e) {
+				let el = e.currentTarget.dataset
+				this.listAll.forEach(item => {
+					if (item.id == el.bid) {
+						console.log(item)
+						app.list = item.list.map(item => item.id)
+						console.log(app.list)
+					}
+				})
+
 				uni.navigateTo({
-					url: "../playing/index?id=" + e.detail.index
+					url: `../playing/index?id=${el.id}`
 				})
 			},
-			getData: function(id,name, url) {
+			getData: function(id, name, url) {
 				//创建Promise 实例时立即执行
 				return new Promise((resolve, reject) => {
 					uni.request({
@@ -72,7 +79,7 @@
 								id,
 								name: name,
 								list: arr.filter((item, index) => {
-									if (index < 6) return item
+									return item
 								})
 							})
 						}

@@ -23,10 +23,10 @@
 
 <script>
 	let bgm = uni.createInnerAudioContext();
+	let app = getApp().globalData
 	export default {
 		data() {
 			return {
-				apiUrl: getApp().globalData.apiUrl,
 				obj: {},
 				url: "",
 				leftNum: 50,
@@ -36,9 +36,9 @@
 			}
 		},
 		onLoad: function(option) {
+			console.log(option)
 			this.getDetail(option.id)
-			let data = getApp().globalData
-			if (option.id == data.id) {
+			if (option.id == app.id) {
 				console.log("旋转起来")
 				this.play_status = true
 			}
@@ -55,7 +55,7 @@
 			},
 			getDetail: function(id) {
 				uni.request({
-					url: `${this.apiUrl}/song/detail?ids=${id}`,
+					url: `${app.apiUrl}/song/detail?ids=${id}`,
 					success: res => {
 						this.obj = res.data.songs[0]
 						console.log(this.obj)
@@ -66,7 +66,15 @@
 			//播放和暂停
 			bgmPlay: function(id) {
 				this.$bgmPlay(id);
-				this.play_status = getApp().globalData.status
+				this.play_status = app.status
+				// 播放自动停止
+				app.bgm.onEnded(() => {
+					console.log("音乐停止")
+					app.status = false;
+					let mid = app.list[app.list.findIndex(item => item == app.id) + 1]
+					this.getDetail(mid)
+					this.$bgmPlay(mid)
+				})
 			},
 		}
 	}
