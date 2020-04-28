@@ -1,1 +1,0 @@
-<view class="songMain data-v-74735508"><view class="_h1 data-v-74735508">{{name}}</view><audio src="{{url}}" controls name="{{name}}" poster="{{bgUrl}}" class="data-v-74735508"></audio></view>
