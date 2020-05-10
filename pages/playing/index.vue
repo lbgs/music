@@ -12,7 +12,7 @@
 		</view>
 		<!-- <view> 状态栏下的文字 </view> -->
 		<view class="img-control" v-if="obj.al">
-			<image :src="obj.al.picUrl" :class="play_status ? 'play':'pause'" @click="bgmPlay(obj.id,play_status)"></image>
+			<image :src="obj.al.picUrl" :class="play_status ? 'play':'pause'" @click="bgmPlay(obj.id)"></image>
 		</view>
 		<!-- 分享按钮 -->
 		<view class="share" hover-class="share-hover" @click="share()">
@@ -39,7 +39,6 @@
 			console.log(option)
 			this.getDetail(option.id)
 			if (option.id == app.id) {
-				console.log("旋转起来")
 				this.play_status = true
 			}
 
@@ -50,8 +49,7 @@
 				uni.navigateBack()
 			},
 			share: function(id) {
-				console.log("全局事件")
-				console.log(id)
+				console.log("分享")
 			},
 			getDetail: function(id) {
 				uni.request({
@@ -63,14 +61,15 @@
 					}
 				})
 			},
+			
 			//播放和暂停
 			bgmPlay: function(id) {
+				console.log(app['bgm']['paused'])
+				this.play_status = app.bgm.paused
 				this.$bgmPlay(id);
-				this.play_status = app.status
 				// 播放自动停止
 				app.bgm.onEnded(() => {
 					console.log("音乐停止")
-					app.status = false;
 					let mid = app.list[app.list.findIndex(item => item == app.id) + 1]
 					this.getDetail(mid)
 					this.$bgmPlay(mid)

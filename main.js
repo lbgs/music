@@ -15,7 +15,6 @@ Vue.prototype.$bgmPlay = (id) => {
 	if (id != app.id) {
 		console.log(id)
 		app.id = id;
-		app.status = false
 		if(app.bgm){app.bgm.destroy();}
 		app.bgm = uni.createInnerAudioContext()
 		uni.request({
@@ -26,13 +25,11 @@ Vue.prototype.$bgmPlay = (id) => {
 			}
 		})
 	}
-	if (app.status) {
+	if (!app.bgm.paused) {
 		app.bgm.pause();
 		app.bgm.startTime = app.pauseTime
-		app.status = false
 	} else {
 		app.bgm.play();
-		app.status = true
 	}
 	app.bgm.onTimeUpdate(() => {
 		app.pauseTime = app.bgm.currentTime
